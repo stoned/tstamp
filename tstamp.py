@@ -1,22 +1,36 @@
 from __future__ import print_function
 import os
 import time
+import socket
 from flask import Flask, render_template_string, request, redirect, url_for
-app = Flask(__name__)
+
+
 TSTAMP_FILE = os.getenv("TSTAMP_FILE", "/tmp/tstamp.log")
 INDEX = """
 {% block content %}
 <form action="" method="post">
-  <input type="submit" name="timestamp" value="Timestamp!"/>
-  <input type="submit" name="clear" value="Clear!"/>
+ <input type="submit" name="timestamp" value="Timestamp!"/>
+ <input type="submit" name="clear" value="Clear!"/>
 </form>
-{% for t in tstamps %}
-<p>
-{{ t }}
-</p>
+<hr/>
+App {{ color }} on {{ hostname }} from {{ client }} with headers
+<hr/>
+<ul>
+{% for h,v in headers.iteritems() %}
+<li>{{ h }}={{ v }}</li>
 {% endfor %}
+</ul>
+</p>
+<ul>
+{% for t in tstamps %}
+<li>{{ t }}</li>
+{% endfor %}
+</ul>
 {% endblock %}
 """
+
+
+app = Flask(__name__)
 
 
 def get_tstamp():
@@ -25,9 +39,11 @@ def get_tstamp():
         return f.readlines()
 
 
-def new_tstamp():
+def new_tstamp(hostname):
+    tstamp = time.asctime()
+    ts = "%s %s" % (tstamp, hostname)
     with open(TSTAMP_FILE, "a+") as f:
-        f.write("%s\n" % (time.asctime(),))
+        f.write("%s\n" % (ts,))
 
 
 def clear_tstamp():
@@ -37,14 +53,25 @@ def clear_tstamp():
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
+    hostname = socket.gethostname()
+    color = os.getenv("COLOR", "'invisible'")
     if request.method == 'POST':
         if "clear" in request.form:
             clear_tstamp()
         if "timestamp" in request.form:
-            new_tstamp()
+            new_tstamp(hostname)
         redirect(url_for('index'))
 
     tstamps = get_tstamp()
     if not tstamps:
         tstamps.append("No timestamps")
-    return render_template_string(INDEX, tstamps=reversed(tstamps))
+    return render_template_string(INDEX,
+                                  tstamps=reversed(tstamps),
+                                  hostname=hostname, client=request.remote_addr, headers=request.headers,
+                                  color=color)
+
+
+if __name__ == '__main__':
+    host = os.getenv("HOST", "127.0.0.1")
+    port = os.getenv("PORT", "5000")
+    app.run(host=host, port=port)
