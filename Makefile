@@ -1,5 +1,5 @@
 NAME?=		stoned/tstampapp
-VERSION?=	1.0
+VERSION?=	1.1
 
 DOCKER?=	docker
 PIPENV?=	pipenv
