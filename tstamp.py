@@ -39,9 +39,9 @@ def get_tstamp():
         return f.readlines()
 
 
-def new_tstamp(hostname):
+def new_tstamp(hostname, color):
     tstamp = time.asctime()
-    ts = "%s %s" % (tstamp, hostname)
+    ts = "%s %s %s" % (tstamp, hostname, color)
     with open(TSTAMP_FILE, "a+") as f:
         f.write("%s\n" % (ts,))
 
@@ -59,7 +59,7 @@ def index():
         if "clear" in request.form:
             clear_tstamp()
         if "timestamp" in request.form:
-            new_tstamp(hostname)
+            new_tstamp(hostname, color)
         redirect(url_for('index'))
 
     tstamps = get_tstamp()
