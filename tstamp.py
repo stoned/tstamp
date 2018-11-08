@@ -13,13 +13,14 @@ INDEX = """
  <input type="submit" name="clear" value="Clear!"/>
 </form>
 <hr/>
-App {{ color }} on {{ hostname }} from {{ client }} with headers
+App {{ color }} on {{ hostname }} from {{ client }}
 <hr/>
 <ul>
 {% for h,v in headers.iteritems() %}
 <li>{{ h }}={{ v }}</li>
 {% endfor %}
 </ul>
+<hr/>
 </p>
 <ul>
 {% for t in tstamps %}
