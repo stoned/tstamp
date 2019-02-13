@@ -14,6 +14,13 @@ INDEX = """
 </form>
 <hr/>
 App {{ color }} on {{ hostname }} from {{ client }}
+<ul>
+<li>path: {{ request.path }}</li>
+<li>script_root: {{ request.script_root }}</li>
+<li>base_url: {{ request.base_url }}</li>
+<li>url: {{ request.url }}</li>
+<li>url_root: {{ request.url_root }}</li>
+</ul>
 <hr/>
 <ul>
 {% for h,v in headers.iteritems() %}
@@ -52,8 +59,9 @@ def clear_tstamp():
         pass
 
 
-@app.route("/", methods=['GET', 'POST'])
-def index():
+@app.route("/", methods=['GET', 'POST'], defaults={"path": ""})
+@app.route("/<path:path>")
+def index(path):
     hostname = socket.gethostname()
     color = os.getenv("COLOR", "'invisible'")
     if request.method == 'POST':
@@ -69,7 +77,7 @@ def index():
     return render_template_string(INDEX,
                                   tstamps=reversed(tstamps),
                                   hostname=hostname, client=request.remote_addr, headers=request.headers,
-                                  color=color)
+                                  path=path, request=request, color=color)
 
 
 if __name__ == '__main__':
