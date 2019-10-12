@@ -17,9 +17,9 @@ App {{ color }} on {{ hostname }} from {{ client }}
 <ul>
 <li>path: {{ request.path }}</li>
 <li>script_root: {{ request.script_root }}</li>
-<li>base_url: {{ request.base_url }}</li>
-<li>url: {{ request.url }}</li>
-<li>url_root: {{ request.url_root }}</li>
+<li>base_url: <a href="{{ request.base_url }}">{{ request.base_url }}</a></li>
+<li>url: <a href="{{ request.url }}">{{ request.url }}</a></li>
+<li>url_root: <a href="{{ request.url_root }}">{{ request.url_root }}</a></li>
 </ul>
 <hr/>
 <ul>
@@ -47,9 +47,9 @@ def get_tstamp():
         return f.readlines()
 
 
-def new_tstamp(hostname, color):
+def new_tstamp(hostname, color, url):
     tstamp = time.asctime()
-    ts = "%s %s %s" % (tstamp, hostname, color)
+    ts = "%s %s %s %s" % (tstamp, hostname, color, url)
     with open(TSTAMP_FILE, "a+") as f:
         f.write("%s\n" % (ts,))
 
@@ -60,7 +60,7 @@ def clear_tstamp():
 
 
 @app.route("/", methods=['GET', 'POST'], defaults={"path": ""})
-@app.route("/<path:path>")
+@app.route("/<path:path>", methods=['GET', 'POST'])
 def index(path):
     hostname = socket.gethostname()
     color = os.getenv("COLOR", "'invisible'")
@@ -68,7 +68,7 @@ def index(path):
         if "clear" in request.form:
             clear_tstamp()
         if "timestamp" in request.form:
-            new_tstamp(hostname, color)
+            new_tstamp(hostname, color, request.url)
         redirect(url_for('index'))
 
     tstamps = get_tstamp()
