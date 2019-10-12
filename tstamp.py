@@ -23,7 +23,7 @@ App {{ color }} on {{ hostname }} from {{ client }}
 </ul>
 <hr/>
 <ul>
-{% for h,v in headers.iteritems() %}
+{% for h,v in headers.items() %}
 <li>{{ h }}={{ v }}</li>
 {% endfor %}
 </ul>
@@ -42,8 +42,7 @@ app = Flask(__name__)
 
 
 def get_tstamp():
-    # open with 'a+' to create (empty) file on fresh start
-    with open(TSTAMP_FILE, "a+") as f:
+    with open(TSTAMP_FILE, "r") as f:
         return f.readlines()
 
 

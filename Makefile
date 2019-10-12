@@ -1,7 +1,7 @@
 NAME?=		stoned/tstampapp
-VERSION?=	1.3
+VERSION?=	1.4
 
-DOCKER?=	docker
+DOCKER?=	podman
 PIPENV?=	pipenv
 
 ifneq (,$(HTTP_PROXY))
