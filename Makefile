@@ -1,5 +1,7 @@
 NAME?=		stoned/tstampapp
 VERSION?=	1.5
+IMAGE?=		$(NAME):$(VERSION)
+DOCKER_HUB_TAG?=	$(VERSION)
 
 POD?=		$(notdir $(CURDIR))
 
@@ -45,6 +47,9 @@ podrm:
 
 run: FORCE
 	$(PODMAN) run -ti --rm -P $(NAME):latest
+
+push-to-docker:
+	podman push $(IMAGE) docker://docker.io/$(NAME):$(DOCKER_HUB_TAG)
 
 Pipfile.lock: Pipfile
 	$(PIPENV) lock
