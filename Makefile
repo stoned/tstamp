@@ -26,7 +26,6 @@ all: build
 
 build: FORCE requirements.txt
 	$(PODMAN) build $(build_args) -t $(NAME):$(VERSION) .
-	$(PODMAN) tag $(NAME):$(VERSION) $(NAME):latest
 
 dev: FORCE
 	FLASK_APP=tstamp.py flask run
@@ -46,7 +45,7 @@ podrm:
 	}
 
 run: FORCE
-	$(PODMAN) run -ti --rm -P $(NAME):latest
+	$(PODMAN) run -ti --rm -P $(IMAGE)
 
 push-to-docker:
 	podman push $(IMAGE) docker://docker.io/$(NAME):$(DOCKER_HUB_TAG)
