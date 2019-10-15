@@ -3,4 +3,4 @@
 : ${HOST:=0.0.0.0}
 export PORT
 export HOST
-exec python tstamp.py "$@"
+exec python3 tstamp.py "$@"

@@ -1,7 +1,10 @@
 NAME?=		stoned/tstampapp
-VERSION?=	1.4
+VERSION?=	1.5
 
-DOCKER?=	podman
+POD?=		$(notdir $(CURDIR))
+
+PODMAN?=	podman
+COMPOSE?=	podman-compose
 PIPENV?=	pipenv
 
 ifneq (,$(HTTP_PROXY))
@@ -19,20 +22,37 @@ endif
 
 all: build
 
-build: FORCE
-	$(DOCKER) build $(build_args) -t $(NAME):$(VERSION) .
-	$(DOCKER) tag $(NAME):$(VERSION) $(NAME):latest
+build: FORCE requirements.txt
+	$(PODMAN) build $(build_args) -t $(NAME):$(VERSION) .
+	$(PODMAN) tag $(NAME):$(VERSION) $(NAME):latest
 
-dev:
+dev: FORCE
 	FLASK_APP=tstamp.py flask run
 
-run:
-	$(DOCKER) run -ti --rm -P $(NAME):latest
+up: FORCE
+	$(COMPOSE) up -d
+
+down: FORCE
+	$(COMPOSE) down
+
+podrm:
+	set -e; $(PODMAN) pod exists $(POD) && { \
+	  pods=$$($(PODMAN) ps -f label=io.podman.compose.project=$(POD) -a --format='{{.ID}}'); \
+	  test -n "$$pods" && $(PODMAN) stop $$pods; \
+	  test -n "$$pods" && $(PODMAN) rm $$pods; \
+	  $(PODMAN) pod rm $(POD); \
+	}
+
+run: FORCE
+	$(PODMAN) run -ti --rm -P $(NAME):latest
 
 Pipfile.lock: Pipfile
 	$(PIPENV) lock
 
 requirements.txt: Pipfile.lock
 	$(PIPENV) lock -r > $@ || { rm -f $@; exit 1; }
+
+clean: FORCE
+	find . -name "*.pyc" -delete
 
 FORCE:

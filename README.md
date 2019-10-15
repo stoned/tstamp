@@ -1,3 +1,3 @@
-# Timestamp application
+# Timestamps application
 
 ... for demonstration purpose

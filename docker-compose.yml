@@ -1,0 +1,13 @@
+version: '2'
+services:
+  redis:
+    image: 'redis:5.0.6-alpine'
+    ports:
+    - '6379'
+  tstamp:
+    build: '.'
+    image: 'stoned/tstampapp'
+    ports:
+    - '5000'
+    environment:
+    - 'USE_REDIS=1'
