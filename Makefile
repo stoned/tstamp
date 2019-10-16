@@ -1,5 +1,5 @@
 NAME?=		stoned/tstampapp
-VERSION?=	1.5
+VERSION?=	1.6
 IMAGE?=		$(NAME):$(VERSION)
 DOCKER_HUB_TAG?=	$(VERSION)
 

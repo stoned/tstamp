@@ -402,8 +402,8 @@ def get_random_name():
 
 
 def init_redis():
-    redis_service = os.getenv('REDIS', 'redis')
-    redis_port = os.getenv('REDIS_PORT', '6379')
+    redis_service = os.getenv('REDIS_SERVICE_HOST', 'redis')
+    redis_port = os.getenv('REDIS_SERVICE_PORT', '6379')
     return redis.Redis(host=redis_service, port=redis_port)
 
 
