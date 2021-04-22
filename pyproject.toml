@@ -7,13 +7,13 @@ license = "BSD-3-Clause"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-click = "7.0"
-Flask = "1.1.1"
-itsdangerous = "1.1.0"
-jinja2 = "2.10.3"
-Markupsafe = "1.1.1"
-redis = "3.3.10"
-Werkzeug = "0.16.0"
+click = "^7.1.2"
+Flask = "^1.1.2"
+itsdangerous = "^1.1.0"
+jinja2 = "^2.11.3"
+Markupsafe = "^1.1.1"
+redis = "^3.5.3"
+Werkzeug = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 podman-compose = "*"
