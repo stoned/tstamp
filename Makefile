@@ -7,7 +7,7 @@ POD?=		$(notdir $(CURDIR))
 
 PODMAN?=	podman
 COMPOSE?=	podman-compose
-PIPENV?=	pipenv
+POETRY?=	poetry
 
 ifneq (,$(HTTP_PROXY))
 build_args+=	--build-arg HTTP_PROXY=$(HTTP_PROXY)
@@ -24,11 +24,13 @@ endif
 
 all: build
 
-build: FORCE requirements.txt
+.PHONY: build
+build: requirements.txt
 	$(PODMAN) build $(build_args) -t $(NAME):$(VERSION) .
 
-dev: FORCE
-	FLASK_APP=tstamp.py flask run
+.PHONY: dev
+dev:
+	$(POETRY) run env FLASK_APP=tstamp.py flask run
 
 up: FORCE
 	$(COMPOSE) up -d
@@ -50,11 +52,8 @@ run: FORCE
 push-to-docker:
 	podman push $(IMAGE) docker://docker.io/$(NAME):$(DOCKER_HUB_TAG)
 
-Pipfile.lock: Pipfile
-	$(PIPENV) lock
-
-requirements.txt: Pipfile.lock
-	$(PIPENV) lock -r > $@ || { rm -f $@; exit 1; }
+requirements.txt: poetry.lock
+	$(POETRY) export -f requirements.txt --output $@
 
 clean: FORCE
 	find . -name "*.pyc" -delete
