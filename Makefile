@@ -34,12 +34,15 @@ build: requirements.txt
 dev:
 	$(POETRY) run env FLASK_APP=tstamp.py flask run
 
-up: FORCE
+.PHONY: up
+up:
 	$(COMPOSE) up -d
 
-down: FORCE
+.PHONY: down
+down:
 	$(COMPOSE) down
 
+.PHONY: podrm
 podrm:
 	set -e; $(PODMAN) pod exists $(POD) && { \
 	  pods=$$($(PODMAN) ps -f label=io.podman.compose.project=$(POD) -a --format='{{.ID}}'); \
@@ -48,16 +51,16 @@ podrm:
 	  $(PODMAN) pod rm $(POD); \
 	}
 
-run: FORCE
+.PHONY: run
+run:
 	$(PODMAN) run -ti --rm -P $(IMAGE)
 
+.PHONY: push-to-docker
 push-to-docker:
 	podman push $(IMAGE) docker://docker.io/$(NAME):$(DOCKER_HUB_TAG)
 
 requirements.txt: poetry.lock
 	$(POETRY) export -f requirements.txt --output $@
 
-clean: FORCE
+clean:
 	find . -name "*.pyc" -delete
-
-FORCE:
