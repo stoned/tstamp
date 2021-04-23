@@ -1,9 +1,10 @@
 NAME?=		stoned/tstampapp
-VERSION?=	1.6
+VERSION?=	1.7
 IMAGE?=		$(NAME):$(VERSION)
 DOCKER_HUB_TAG?=	$(VERSION)
 
 POD?=		$(notdir $(CURDIR))
+IMAGE_FROM?=	docker.io/python:3.9.4-slim-buster
 
 PODMAN?=	podman
 COMPOSE?=	podman-compose
@@ -24,6 +25,7 @@ endif
 
 all: build
 
+build_args+=	--build-arg IMAGE_FROM=$(IMAGE_FROM)
 .PHONY: build
 build: requirements.txt
 	$(PODMAN) build $(build_args) -t $(NAME):$(VERSION) .
