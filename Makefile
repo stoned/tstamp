@@ -61,6 +61,3 @@ push-to-docker:
 
 requirements.txt: poetry.lock
 	$(POETRY) export -f requirements.txt --output $@
-
-clean:
-	find . -name "*.pyc" -delete
